@@ -36,7 +36,7 @@
   <PropertyGroup />
   <ItemGroup>
     <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
-      <HintPath>..\..\..\..\MicrosoftALVersions\LatestBC\bin\win32\Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\BCPreviews\VSCode\data\extensions\ms-dynamics-smb.al-6.0.324421\bin\Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

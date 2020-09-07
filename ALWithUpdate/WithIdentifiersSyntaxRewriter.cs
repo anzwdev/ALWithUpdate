@@ -2,6 +2,7 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis.SymbolReference;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,18 +20,42 @@ namespace ALWithUpdate
 
         public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
         {
-            IOperation operation = this.SemanticModel.GetOperation(node);
-            if (operation != null)
+            bool skip =
+                (node.Parent.Kind == SyntaxKind.PageField) &&
+                (((PageFieldSyntax)node.Parent).Name == node);
+
+            if (!skip)
             {
-                IOperation operationInstance = this.GetOperationInstance(operation);
-                if ((operationInstance != null) &&
-                    (operationInstance.Syntax != null) &&
-                    (operationInstance.Syntax.Parent != null) &&
-                    (operationInstance.Syntax.Parent.Kind == SyntaxKind.WithStatement))
+
+                IOperation operation = this.SemanticModel.GetOperation(node);
+                if (operation != null)
                 {
-                    return SyntaxFactory.MemberAccessExpression(
-                        (CodeExpressionSyntax)operationInstance.Syntax.WithoutTrivia(),
-                        node.WithoutTrivia()).WithTriviaFrom(node);
+                    IOperation operationInstance = this.GetOperationInstance(operation);
+
+                    if ((operationInstance != null) &&
+                        (operationInstance.Syntax != null))
+                    {
+                        //part of with?
+                        if ((operationInstance.Syntax.Parent != null) &&
+                        (operationInstance.Syntax.Parent.Kind == SyntaxKind.WithStatement))
+                        {
+                            return SyntaxFactory.MemberAccessExpression(
+                                (CodeExpressionSyntax)operationInstance.Syntax.WithoutTrivia(),
+                                node.WithoutTrivia()).WithTriviaFrom(node);
+                        }
+
+                        //global variable reference?
+                        else if ((operationInstance.Kind == OperationKind.GlobalReferenceExpression) &&
+                            (node.Parent.Kind != SyntaxKind.MemberAccessExpression))
+                        {
+                            IGlobalReferenceExpression globalRef = (IGlobalReferenceExpression)operationInstance;
+                            string name = globalRef.GlobalVariable.Name.ToString();
+
+                            return SyntaxFactory.MemberAccessExpression(
+                                SyntaxFactory.IdentifierName(name),
+                                node.WithoutTrivia()).WithTriviaFrom(node);
+                        }
+                    }
                 }
             }
 

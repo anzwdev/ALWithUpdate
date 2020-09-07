@@ -59,8 +59,11 @@ namespace ALWithUpdate
                 null, this.SyntaxTrees, 
                 new CompilationOptions());
 
+            LocalCacheSymbolReferenceLoader referenceLoader = 
+                new LocalCacheSymbolReferenceLoader(Path.Combine(this.ProjectPath, ".alpackages"));
+
             compilation = compilation
-                .WithReferenceLoader(new LocalCacheSymbolReferenceLoader(Path.Combine(this.ProjectPath, ".alpackages")))
+                .WithReferenceLoader(referenceLoader)
                 .WithReferences(manifest.GetAllReferences());
 
             this.Compilation = compilation;
