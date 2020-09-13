@@ -69,9 +69,15 @@ namespace ALWithUpdate
                 switch (operation.Kind)
                 {
                     case OperationKind.FieldAccess:
-                        return ((IFieldAccess)operation).Instance;
+                        IFieldAccess fieldAccess = operation as IFieldAccess;
+                        if (fieldAccess != null)
+                            return fieldAccess.Instance;
+                        break;
                     case OperationKind.InvocationExpression:
-                        return ((IInvocationExpression)operation).Instance;
+                        IInvocationExpression invocationExpression = operation as IInvocationExpression;
+                        if (invocationExpression != null)
+                            return invocationExpression.Instance;
+                        break;
                 }
             }
             return null;
