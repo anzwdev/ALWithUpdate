@@ -17,6 +17,11 @@ namespace ALWithUpdate
 
         protected override SyntaxNode ProcessALFile(string filePath, SyntaxTree syntaxTree, SemanticModel semanticModel)
         {
+            if (filePath.Contains("Pag50000.MySmallTableList.al"))
+            {
+                int f = 9999999;
+            }
+
             //stage 1 - update calls
             WithIdentifiersSyntaxRewriter identifiersRewriter = new WithIdentifiersSyntaxRewriter();
             identifiersRewriter.SemanticModel = semanticModel;
